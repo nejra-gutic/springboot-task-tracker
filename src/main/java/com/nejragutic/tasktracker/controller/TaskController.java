@@ -2,11 +2,6 @@ package com.nejragutic.tasktracker.controller;
 
 import com.nejragutic.tasktracker.model.Task;
 import com.nejragutic.tasktracker.service.TaskService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +16,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping("/tasks")
+    @GetMapping
     public List<Task> getTasks() {
         return taskService.getTasks();
     }
@@ -31,9 +26,22 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @PostMapping("/tasks")
+    @PostMapping
     public Task createTask(@RequestBody Task task) {
         return taskService.createTask(task);
+    }
+
+    @PutMapping("/{id}")
+    public Task updateTask(
+            @PathVariable Integer id,
+            @RequestBody Task updatedTask
+    ) {
+        return taskService.updateTask(id, updatedTask);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTask(@PathVariable Integer id) {
+        taskService.deleteTask(id);
     }
 
 }

@@ -26,4 +26,22 @@ public class TaskService {
     public Task getTaskById(Integer id) {
         return taskRepository.findById(id).orElse(null);
     }
+
+    public Task updateTask(Integer id, Task updatedTask) {
+
+        Task task = taskRepository.findById(id).orElse(null);
+
+        if (task == null) {
+            return null;
+        }
+
+        task.setTitle(updatedTask.getTitle());
+        task.setStatus(updatedTask.getStatus());
+
+        return taskRepository.save(task);
+    }
+
+    public void deleteTask(Integer id) {
+        taskRepository.deleteById(id);
+    }
 }
