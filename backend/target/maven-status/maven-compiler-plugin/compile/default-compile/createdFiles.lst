@@ -1,5 +1,0 @@
-com/nejragutic/tasktracker/model/Task.class
-com/nejragutic/tasktracker/TaskTrackerApplication.class
-com/nejragutic/tasktracker/controller/TaskController.class
-com/nejragutic/tasktracker/service/TaskService.class
-com/nejragutic/tasktracker/repository/TaskRepository.class
