@@ -3,6 +3,7 @@ package com.nejragutic.tasktracker.controller;
 import com.nejragutic.tasktracker.model.Task;
 import com.nejragutic.tasktracker.service.TaskService;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -27,14 +28,14 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public Task createTask(@Valid @RequestBody Task task) {
         return taskService.createTask(task);
     }
 
     @PutMapping("/{id}")
     public Task updateTask(
             @PathVariable Integer id,
-            @RequestBody Task updatedTask
+            @Valid @RequestBody Task updatedTask
     ) {
         return taskService.updateTask(id, updatedTask);
     }

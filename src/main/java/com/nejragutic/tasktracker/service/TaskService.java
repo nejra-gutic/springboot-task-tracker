@@ -1,5 +1,6 @@
 package com.nejragutic.tasktracker.service;
 
+import com.nejragutic.tasktracker.exception.TaskNotFoundException;
 import com.nejragutic.tasktracker.model.Task;
 import com.nejragutic.tasktracker.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -24,16 +25,14 @@ public class TaskService {
     }
 
     public Task getTaskById(Integer id) {
-        return taskRepository.findById(id).orElse(null);
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     public Task updateTask(Integer id, Task updatedTask) {
 
-        Task task = taskRepository.findById(id).orElse(null);
-
-        if (task == null) {
-            return null;
-        }
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
 
         task.setTitle(updatedTask.getTitle());
         task.setStatus(updatedTask.getStatus());
@@ -42,6 +41,9 @@ public class TaskService {
     }
 
     public void deleteTask(Integer id) {
-        taskRepository.deleteById(id);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
+
+        taskRepository.delete(task);
     }
 }

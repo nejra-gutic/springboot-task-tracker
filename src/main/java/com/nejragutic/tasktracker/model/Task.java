@@ -4,6 +4,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tasks")
@@ -13,9 +15,12 @@ public class Task {
     @GeneratedValue
     private Integer id;
 
+    @NotBlank(message = "Title is required")
+    @Size(min = 3, message = "Title must have at least 3 characters")
     @Column
     private String title;
 
+    @NotBlank(message = "Status is required")
     @Column
     private String status;
 
