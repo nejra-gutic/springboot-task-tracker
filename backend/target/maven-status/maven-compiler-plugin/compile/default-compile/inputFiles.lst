@@ -1,0 +1,8 @@
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/TaskTrackerApplication.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/controller/TaskController.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/exception/GlobalExceptionHandler.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/exception/TaskNotFoundException.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/model/Task.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/model/TaskStatus.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/repository/TaskRepository.java
+/Users/nejragutic/IdeaProjects/task-tracker/backend/src/main/java/com/nejragutic/tasktracker/service/TaskService.java
