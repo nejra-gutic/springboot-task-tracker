@@ -6,6 +6,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "tasks")
@@ -20,16 +23,16 @@ public class Task {
     @Column
     private String title;
 
-    @NotBlank(message = "Status is required")
-    @Column
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Status is required")
+    private TaskStatus status;
 
 
     public Task(){
 
     }
 
-    public Task(Integer id, String title, String status) {
+    public Task(Integer id, String title, TaskStatus status) {
         this.id = id;
         this.title = title;
         this.status = status;
@@ -43,7 +46,7 @@ public class Task {
         return title;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
@@ -55,7 +58,7 @@ public class Task {
         this.title = title;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 }
