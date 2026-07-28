@@ -4,14 +4,26 @@ import com.nejragutic.tasktracker.model.Task;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Repository
 public class TaskRepository {
 
-    public List<Task> findAll() {
-        Task task1 = new Task(1, "Learn Spring Boot", "TODO");
-        Task task2 = new Task(2, "Finish CV", "DONE");
+    private final List<Task> tasks = new ArrayList<>();
 
-        return List.of(task1, task2);
+    public TaskRepository() {
+        tasks.add(new Task(1, "Learn Spring Boot", "TODO"));
+        tasks.add(new Task(2, "Finish CV", "DONE"));
+    }
+
+    public List<Task> findAll() {
+        return tasks;
+    }
+
+    public Task save(Task task) {
+        task.setId(tasks.size() + 1);
+        tasks.add(task);
+
+        return task;
     }
 }
