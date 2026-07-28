@@ -22,4 +22,8 @@ public class TaskService {
     public Task createTask(Task task) {
         return taskRepository.save(task);
     }
+
+    public Task getTaskById(Integer id) {
+        return taskRepository.findById(id).orElse(null);
+    }
 }

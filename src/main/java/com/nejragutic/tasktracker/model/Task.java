@@ -1,9 +1,22 @@
 package com.nejragutic.tasktracker.model;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
 
+@Entity
+@Table(name = "tasks")
 public class Task {
 
+    @Id
+    @GeneratedValue
     private Integer id;
+
+    @Column
     private String title;
+
+    @Column
     private String status;
 
 
