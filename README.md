@@ -39,7 +39,7 @@ A full-stack task management application built with **Spring Boot**, **React**, 
 
 ### Home Page
 
-![Task Tracker](screenshots/task-tracker.png)
+![Task Tracker](screenshots/task_tracker.png)
 
 ---
 
