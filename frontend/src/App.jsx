@@ -168,6 +168,18 @@ function App() {
             ? tasks
             : tasks.filter((task) => task.status === filterStatus)
 
+    const statusLabels = {
+        TODO: 'To Do',
+        IN_PROGRESS: 'In Progress',
+        DONE: 'Done',
+    }
+
+    const priorityLabels = {
+        LOW: 'Low',
+        MEDIUM: 'Medium',
+        HIGH: 'High',
+    }
+
     return (
         <main>
             <h1>Task Tracker</h1>
@@ -321,11 +333,12 @@ function App() {
 
                                     <div className="task-badges">
                         <span className={`status ${task.status}`}>
-                            {task.status}
+                            {statusLabels[task.status]}
                         </span>
 
-                                        <span className={`priority ${task.priority}`}>
-                            Priority: {task.priority}
+
+                        <span className={`priority ${task.priority}`}>
+                                {priorityLabels[task.priority]}
                         </span>
                                     </div>
 
@@ -335,19 +348,21 @@ function App() {
                                         </p>
                                     )}
 
-                                    <button
-                                        type="button"
-                                        onClick={() => handleEdit(task)}
-                                    >
-                                        Edit
-                                    </button>
+                                    <div className="task-actions">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleEdit(task)}
+                                        >
+                                            Edit
+                                        </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDelete(task.id)}
-                                    >
-                                        Delete
-                                    </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDelete(task.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </>
                             )}
                         </article>

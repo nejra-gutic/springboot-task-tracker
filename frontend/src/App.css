@@ -81,18 +81,19 @@ section h2 {
 }
 
 article {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1.2fr 2.5fr 1.3fr auto auto;
   align-items: center;
-  gap: 12px;
-  padding: 18px;
+  gap: 16px;
+  padding: 18px 22px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
 }
 
 article h3 {
-  flex: 1;
   margin: 0;
+  line-height: 1.25;
 }
 
 article p {
@@ -148,14 +149,22 @@ form p {
 }
 
 @media (max-width: 650px) {
-  form,
-  article {
+  form {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  article {
+    grid-template-columns: 1fr;
     align-items: stretch;
   }
 
   input {
     width: 100%;
+  }
+
+  .task-badges {
+    flex-direction: row;
   }
 }
 
@@ -184,9 +193,10 @@ section > h2 {
 
 .task-badges {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 8px;
-  flex-wrap: wrap;
-  margin: 10px 0;
+  margin: 0;
 }
 
 .priority {
@@ -219,6 +229,7 @@ section > h2 {
 .due-date {
   color: #6b7280;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .loading-message,
@@ -227,4 +238,10 @@ section > h2 {
   color: #6b7280;
   margin-top: 24px;
   font-size: 16px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
