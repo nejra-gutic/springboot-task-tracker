@@ -3,28 +3,53 @@ import './App.css'
 
 function App() {
     const [tasks, setTasks] = useState([])
+
     const [title, setTitle] = useState('')
     const [status, setStatus] = useState('TODO')
+    const [priority, setPriority] = useState('MEDIUM')
+    const [description, setDescription] = useState('')
+    const [dueDate, setDueDate] = useState('')
 
     const [editingTaskId, setEditingTaskId] = useState(null)
     const [editTitle, setEditTitle] = useState('')
     const [editStatus, setEditStatus] = useState('TODO')
+    const [editPriority, setEditPriority] = useState('MEDIUM')
+    const [editDescription, setEditDescription] = useState('')
+    const [editDueDate, setEditDueDate] = useState('')
 
     const [errorMessage, setErrorMessage] = useState('')
+    const [isLoading, setIsLoading] = useState(true)
+    const [filterStatus, setFilterStatus] = useState('ALL')
 
     useEffect(() => {
         fetch('http://localhost:8080/tasks')
-            .then((response) => response.json())
-            .then((data) => setTasks(data))
-            .catch((error) => console.error('Error fetching tasks:', error))
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Could not load tasks')
+                }
+
+                return response.json()
+            })
+            .then((data) => {
+                setTasks(data)
+            })
+            .catch((error) => {
+                setErrorMessage(error.message)
+            })
+            .finally(() => {
+                setIsLoading(false)
+            })
     }, [])
 
     const handleSubmit = (event) => {
         event.preventDefault()
 
         const newTask = {
-            title: title,
-            status: status,
+            title,
+            status,
+            priority,
+            description,
+            dueDate: dueDate || null,
         }
 
         fetch('http://localhost:8080/tasks', {
@@ -46,8 +71,12 @@ function App() {
             .then((createdTask) => {
                 setTasks([...tasks, createdTask])
                 setErrorMessage('')
+
                 setTitle('')
                 setStatus('TODO')
+                setPriority('MEDIUM')
+                setDescription('')
+                setDueDate('')
             })
             .catch((error) => {
                 setErrorMessage(error.message)
@@ -55,21 +84,41 @@ function App() {
     }
 
     const handleDelete = (id) => {
+        const confirmed = window.confirm(
+            'Are you sure you want to delete this task?'
+        )
+
+        if (!confirmed) {
+            return
+        }
         fetch(`http://localhost:8080/tasks/${id}`, {
             method: 'DELETE',
         })
             .then((response) => {
-                if (response.ok) {
-                    setTasks(tasks.filter((task) => task.id !== id))
+                if (!response.ok) {
+                    throw new Error('Could not delete task')
                 }
+
+                setTasks(tasks.filter((task) => task.id !== id))
+                setErrorMessage('')
             })
-            .catch((error) => console.error('Error deleting task:', error))
+            .catch((error) => {
+                setErrorMessage(error.message)
+            })
     }
 
     const handleEdit = (task) => {
         setEditingTaskId(task.id)
         setEditTitle(task.title)
         setEditStatus(task.status)
+        setEditPriority(task.priority || 'MEDIUM')
+        setEditDescription(task.description || '')
+        setEditDueDate(task.dueDate || '')
+        setErrorMessage('')
+    }
+
+    const handleCancel = () => {
+        setEditingTaskId(null)
         setErrorMessage('')
     }
 
@@ -78,6 +127,9 @@ function App() {
             id: editingTaskId,
             title: editTitle,
             status: editStatus,
+            priority: editPriority,
+            description: editDescription,
+            dueDate: editDueDate || null,
         }
 
         fetch(`http://localhost:8080/tasks/${editingTaskId}`, {
@@ -103,6 +155,7 @@ function App() {
                     )
                 )
 
+                setErrorMessage('')
                 setEditingTaskId(null)
             })
             .catch((error) => {
@@ -110,15 +163,17 @@ function App() {
             })
     }
 
+    const filteredTasks =
+        filterStatus === 'ALL'
+            ? tasks
+            : tasks.filter((task) => task.status === filterStatus)
+
     return (
         <main>
             <h1>Task Tracker</h1>
             <p>Manage your tasks in one place.</p>
 
             <form onSubmit={handleSubmit}>
-                <h2>Add a new task</h2>
-                {errorMessage && <p>{errorMessage}</p>}
-
                 <input
                     type="text"
                     placeholder="Task title"
@@ -126,63 +181,178 @@ function App() {
                     onChange={(event) => setTitle(event.target.value)}
                 />
 
+                <textarea
+                    placeholder="Description"
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    maxLength={500}
+                />
+
                 <select
                     value={status}
                     onChange={(event) => setStatus(event.target.value)}
                 >
-                    <option value="TODO">TODO</option>
-                    <option value="IN_PROGRESS">IN PROGRESS</option>
-                    <option value="DONE">DONE</option>
+                    <option value="TODO">To Do</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="DONE">Done</option>
                 </select>
+
+                <select
+                    value={priority}
+                    onChange={(event) => setPriority(event.target.value)}
+                >
+                    <option value="LOW">Low Priority</option>
+                    <option value="MEDIUM">Medium Priority</option>
+                    <option value="HIGH">High Priority</option>
+                </select>
+
+                <input
+                    type="date"
+                    value={dueDate}
+                    onChange={(event) => setDueDate(event.target.value)}
+                />
 
                 <button type="submit">Add Task</button>
             </form>
 
+            {errorMessage && (
+                <p className="error-message">
+                    {errorMessage}
+                </p>
+            )}
+
             <section>
                 <h2>Tasks</h2>
 
-                {tasks.map((task) => (
-                    <article key={task.id}>
-                        {editingTaskId === task.id ? (
-                            <>
-                                <input
-                                    value={editTitle}
-                                    onChange={(e) => setEditTitle(e.target.value)}
-                                />
+                <select
+                    value={filterStatus}
+                    onChange={(event) => setFilterStatus(event.target.value)}
+                >
+                    <option value="ALL">All Tasks</option>
+                    <option value="TODO">To Do</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="DONE">Done</option>
+                </select>
 
-                                <select
-                                    value={editStatus}
-                                    onChange={(e) => setEditStatus(e.target.value)}
-                                >
-                                    <option value="TODO">TODO</option>
-                                    <option value="IN_PROGRESS">IN_PROGRESS</option>
-                                    <option value="DONE">DONE</option>
-                                </select>
+                {isLoading ? (
+                    <p className="loading-message">Loading tasks...</p>
+                ) : filteredTasks.length === 0 ? (
+                    <p className="empty-message">
+                        No tasks yet. Add your first task above.
+                    </p>
+                ) : (
+                    filteredTasks.map((task) => (
+                        <article key={task.id}>
+                            {editingTaskId === task.id ? (
+                                <>
+                                    <input
+                                        type="text"
+                                        value={editTitle}
+                                        onChange={(event) =>
+                                            setEditTitle(event.target.value)
+                                        }
+                                    />
 
-                                <button onClick={handleSave}>
-                                    Save
-                                </button>
+                                    <textarea
+                                        value={editDescription}
+                                        onChange={(event) =>
+                                            setEditDescription(event.target.value)
+                                        }
+                                        maxLength={500}
+                                    />
 
-                                <button onClick={() => setEditingTaskId(null)}>
-                                    Cancel
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <h3>{task.title}</h3>
-                                <p>Status: {task.status}</p>
+                                    <select
+                                        value={editStatus}
+                                        onChange={(event) =>
+                                            setEditStatus(event.target.value)
+                                        }
+                                    >
+                                        <option value="TODO">To Do</option>
+                                        <option value="IN_PROGRESS">
+                                            In Progress
+                                        </option>
+                                        <option value="DONE">Done</option>
+                                    </select>
 
-                                <button onClick={() => handleEdit(task)}>
-                                    Edit
-                                </button>
+                                    <select
+                                        value={editPriority}
+                                        onChange={(event) =>
+                                            setEditPriority(event.target.value)
+                                        }
+                                    >
+                                        <option value="LOW">Low Priority</option>
+                                        <option value="MEDIUM">
+                                            Medium Priority
+                                        </option>
+                                        <option value="HIGH">High Priority</option>
+                                    </select>
 
-                                <button onClick={() => handleDelete(task.id)}>
-                                    Delete
-                                </button>
-                            </>
-                        )}
-                    </article>
-                ))}
+                                    <input
+                                        type="date"
+                                        value={editDueDate}
+                                        onChange={(event) =>
+                                            setEditDueDate(event.target.value)
+                                        }
+                                    />
+
+                                    <button
+                                        type="button"
+                                        onClick={handleSave}
+                                    >
+                                        Save
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleCancel}
+                                    >
+                                        Cancel
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <h3>{task.title}</h3>
+
+                                    {task.description && (
+                                        <p className="task-description">
+                                            {task.description}
+                                        </p>
+                                    )}
+
+                                    <div className="task-badges">
+                        <span className={`status ${task.status}`}>
+                            {task.status}
+                        </span>
+
+                                        <span className={`priority ${task.priority}`}>
+                            Priority: {task.priority}
+                        </span>
+                                    </div>
+
+                                    {task.dueDate && (
+                                        <p className="due-date">
+                                            Due: {task.dueDate}
+                                        </p>
+                                    )}
+
+                                    <button
+                                        type="button"
+                                        onClick={() => handleEdit(task)}
+                                    >
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDelete(task.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </>
+                            )}
+                        </article>
+                    ))
+                )}
             </section>
         </main>
     )
